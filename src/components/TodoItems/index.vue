@@ -1,12 +1,12 @@
 <template >
     <div  class="todoItems">
-       <ElCheckbox class="roundCheck" id="round" v-model="isChecked" @click="sendnum"></ElCheckbox>
+       <ElCheckbox class="roundCheck" id="round" v-model="tag.complete" @click="sendnum"></ElCheckbox>
         <el-input class="todoInput" 
         style="width: 650px;height: 70%;margin-top: auto;
                 margin-bottom: auto;
                 margin-left: 24px;
-                " v-model="doInput" 
-                :class="{ 'strikethrough': isChecked }"
+                " v-model="tag.text" 
+                :class="{ 'strikethrough': tag.complete }"
                 :readonly="isWrite"/>
         <div class="content-right">
             <button class="deleteButton" @click="removeDiv"><el-icon style="font-size:32px;color: gray;"><CircleClose /></el-icon></button>
@@ -19,8 +19,6 @@ import { ElCheckbox } from 'element-plus';
 export default{
     data(){
         return{
-            doInput:this.tag.text,
-            isChecked:false,
             isWrite:false,
         }
     },
@@ -28,29 +26,29 @@ export default{
         mydata:'',
         tag: {
             default: ''  
-            }  
+            },  
+         
     },
     
     computed: {  
     isWrite() {  
-      // 如果inputValue有内容（非空字符串），则返回true，使其变为只读  
-      return this.doInput.trim() !== '';  
+       
+      return this.tag.text.trim() !== '';  
     }
         },
     methods:{
-
         removeDiv() {  
             this.$emit('sendnum',this.mydata);
-            // console.log(this.tag.text)
+            
     },
         sendnum(){
-           if(this.isChecked==false){
+           if(this.tag.complete==true){
             this.$emit('iscompleted',this.mydata);
            }
            else{
             this.$emit('notcompleted',this.mydata);
            }
-           
+          
         }  
     },
    

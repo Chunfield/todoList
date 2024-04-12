@@ -3,12 +3,15 @@
     <div class="box">
       <Header @add-data="handleAddData"></Header>
       <InputBox @input-updated ="inputData"></InputBox>
-      <div class="todoItems"  v-for="(tag,index) in tags" :key="index">
-        <!-- <div @click="deleteItems(index)">{{ tag.text }}</div> -->
-        <qwe @click="deleteItems(index)" :tag="tag"></qwe>
-        <!-- <TodoItems @notcompleted="notCompleted" @iscompleted="isComlpeted" @sendnum="deleteItems" :mydata="index" :tag="tag"></TodoItems> -->
+      <div class="todoItems"  v-for="(tag,index) in fliterComplete" :key="index">
+        <TodoItems @notcompleted="notCompleted" @iscompleted="isComlpeted" @sendnum="deleteItems" :mydata="index" :tag="tag"></TodoItems>
       </div>
-      <div>{{ done }}</div>
+      <div class="footer">
+        <div>{{ doneCount }}</div>
+        <div>{{ tags.length-doneCount }}</div>
+      </div>
+      <button @click="ifShowcompelet">Complete</button>
+      <button @click="ifShowall">All</button>
     </div>
   </div>
  
@@ -19,20 +22,22 @@
 import Header from './components/Header/index.vue';
 import InputBox from './components/InputBox/index.vue';
 import TodoItems from './components/TodoItems/index.vue';
-import qwe from './components/qwe.vue';
 export default{
   components:{
     Header,
     InputBox,
     TodoItems,
-    qwe,
   },
   data(){
     return{
       tags:[],
       done:0,
+      notDone:0,
       inputCreated:'',
       complete:false,
+      showCompelet:false,
+      showAll:false,
+      showNotcompelet:'',
     }
   },
   created(){
@@ -48,38 +53,29 @@ export default{
   },
   mounted(){
     this.clearLocalStorage();
-
+   
   },
   methods:{
+    ifShowcompelet(){
+      this.showCompelet=true;
+      this.showAll=false;
+    },
+    ifShowall(){
+      this.showAll=true;
+      this.showCompelet=false
+    },
     deleteItems(data){
-      // const afterDelete =this.tags.splice(data,1)
-      // console.log(afterDelete)
-      // this.filterDone()
-      // this.tags.push({text: 'text' + data, complex: false});
-      // const d = this.tags.splice(0,1);
-
-      this.tags.splice(data,1);
-
-     
+        this.tags.splice(data,1);
     },
     isComlpeted(data){
       this.tags[data].complete=true;
       console.log(this.tags[data].complete)
-      this.filterDone()
     },
     notCompleted(data){
       this.tags[data].complete=false;
       console.log(this.tags[data].complete)
-      this.filterDone()
     },
-    filterDone() {  
-        this.done=0;
-      for(let i=0;i<this.tags.length;i++){
-        if(this.tags[i].complete==true){
-          this.done++
-        }
-      }  
-    },  
+    
     handleAddData(){
       this.tags.push({text:'', complete: false });
       this.inputCreated='';
@@ -101,9 +97,22 @@ export default{
     
     }  
   },
+  computed: {  
+  doneCount() {  
+    return this.tags.filter(item => item.complete==true).length
+  },
+   fliterComplete(){
+    if(this.showCompelet){
+      return this.tags.filter(item => item.complete==true)
+    }
+    else if(this.showAll){
+      return this.tags
+    }
+   }
+ 
+},
   beforeDestroy() {  
       this.saveTodos();
-    
     },  
 
 }
@@ -129,6 +138,9 @@ body{
   width: 800px;
   border-radius: 8px;
   background-color:#337ecc;
+}
+.footer{
+  display: flex;
 }
 
 </style>
