@@ -12,6 +12,7 @@
       </div>
       <button @click="ifShowcompelet">Complete</button>
       <button @click="ifShowall">All</button>
+      <button @click="ifShowactive">Active</button>
     </div>
   </div>
  
@@ -36,8 +37,8 @@ export default{
       inputCreated:'',
       complete:false,
       showCompelet:false,
-      showAll:false,
-      showNotcompelet:'',
+      showAll:true,
+      showActive:false,
     }
   },
   created(){
@@ -52,17 +53,34 @@ export default{
     }  
   },
   mounted(){
-    this.clearLocalStorage();
-   
+    // this.clearLocalStorage();
   },
+  watch: {  
+    tags: {  
+      handler(newTags) {  
+        localStorage.setItem('tags', JSON.stringify(newTags));  
+      },
+      deep:true  
+    }  
+  },  
   methods:{
+    updateStorage(){
+
+    },
     ifShowcompelet(){
       this.showCompelet=true;
       this.showAll=false;
+      this.showActive=false;
     },
     ifShowall(){
       this.showAll=true;
-      this.showCompelet=false
+      this.showCompelet=false;
+      this.showActive=false;
+    },
+    ifShowactive(){
+      this.showActive=true;
+      this.showAll=false;
+      this.showCompelet=false;
     },
     deleteItems(data){
         this.tags.splice(data,1);
@@ -107,6 +125,9 @@ export default{
     }
     else if(this.showAll){
       return this.tags
+    }
+    else if(this.showActive){
+      return this.tags.filter(item => item.complete==false)
     }
    }
  
